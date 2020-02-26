@@ -3,7 +3,9 @@ from timeit import default_timer as timer
 
 from django.utils.translation import gettext_lazy as _  # noqa: N812
 
-from health_check.exceptions import HealthCheckException
+from health_check.exceptions import (
+    HealthCheckException, ServiceUnavailable
+)
 
 logger = logging.getLogger('health-check')
 
@@ -30,9 +32,12 @@ class BaseHealthCheckBackend:
             self.check_status()
         except HealthCheckException as e:
             self.add_error(e, e)
-        except BaseException:
-            logger.exception("Unexpected Error!")
+        except NotImplementedError:
+            logger.exception('Method not implemented')
             raise
+        except BaseException as e:
+            logger.exception("Unexpected Error!")
+            self.add_error(ServiceUnavailable("Service unknown error"), e)
         finally:
             self.time_taken = timer() - start
 
