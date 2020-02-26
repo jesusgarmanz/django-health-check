@@ -63,7 +63,8 @@ class HealthCheckDatabaseTests(TestCase):
 
     @patch('health_check.db.backends.TestModel.objects.create',
            lambda title=None: MockDBModel(error_thrown=Exception))
-    def test_raise_exception(self):
+    def test_raise_base_exception(self):
         db_backend = DatabaseBackend()
-        with self.assertRaises(Exception):
-            db_backend.run_check()
+        db_backend.run_check()
+        self.assertTrue(db_backend.errors)
+        self.assertIn('unavailable: Unknown error', db_backend.pretty_status())

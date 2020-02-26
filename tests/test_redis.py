@@ -69,6 +69,26 @@ class TestRedisHealthCheck:
 
     @mock.patch("health_check.contrib.redis.backends.getattr")
     @mock.patch("health_check.contrib.redis.backends.from_url")
+    def test_redis_base_exception(self, mocked_connection, mocked_getattr):
+        """Test Connection Limit Exceeded error."""
+        mocked_getattr.return_value = "redis_url"
+
+        # mock returns
+        mocked_connection.return_value = mock.MagicMock()
+        mocked_connection.return_value.__enter__.side_effect = Exception("Unhandled Error")
+
+        # instantiates the class
+        redis_healthchecker = RedisHealthCheck()
+
+        # invokes the method check_status()
+        redis_healthchecker.check_status()
+        assert len(redis_healthchecker.errors), 1
+
+        # mock assertions
+        mocked_connection.assert_called_once_with('redis://localhost/1')
+
+    @mock.patch("health_check.contrib.redis.backends.getattr")
+    @mock.patch("health_check.contrib.redis.backends.from_url")
     def test_redis_conn_ok(self, mocked_connection, mocked_getattr):
         """Test everything is OK."""
         mocked_getattr.return_value = "redis_url"
