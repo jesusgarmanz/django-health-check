@@ -5,7 +5,9 @@ from django.conf import settings
 from kombu import Connection
 
 from health_check.backends import BaseHealthCheckBackend
-from health_check.exceptions import ServiceUnavailable
+from health_check.exceptions import (
+    ServiceUnavailable, ServiceReturnedUnexpectedResult
+)
 
 logger = logging.getLogger(__name__)
 
@@ -27,10 +29,14 @@ class RabbitMQHealthCheck(BaseHealthCheckBackend):
             with Connection(broker_url) as conn:
                 conn.connect()  # exceptions may be raised upon calling connect
         except ConnectionRefusedError as e:
-            self.add_error(ServiceUnavailable("Unable to connect to RabbitMQ: Connection was refused."), e)
+            self.add_error(ServiceReturnedUnexpectedResult(
+                "Unable to connect to RabbitMQ: Connection was refused."), e
+            )
 
         except AccessRefused as e:
-            self.add_error(ServiceUnavailable("Unable to connect to RabbitMQ: Authentication error."), e)
+            self.add_error(ServiceReturnedUnexpectedResult(
+                "Unable to connect to RabbitMQ: Authentication error."), e
+            )
 
         except IOError as e:
             self.add_error(ServiceUnavailable("IOError"), e)
