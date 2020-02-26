@@ -4,7 +4,9 @@ from django.conf import settings
 from redis import exceptions, from_url
 
 from health_check.backends import BaseHealthCheckBackend
-from health_check.exceptions import ServiceUnavailable
+from health_check.exceptions import (
+    ServiceUnavailable, ServiceReturnedUnexpectedResult
+)
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +26,9 @@ class RedisHealthCheck(BaseHealthCheckBackend):
             with from_url(self.redis_url) as conn:
                 conn.ping()  # exceptions may be raised upon ping
         except ConnectionRefusedError as e:
-            self.add_error(ServiceUnavailable("Unable to connect to Redis: Connection was refused."), e)
+            self.add_error(ServiceReturnedUnexpectedResult(
+                "Unable to connect to Redis: Connection was refused."), e
+            )
         except exceptions.TimeoutError as e:
             self.add_error(ServiceUnavailable("Unable to connect to Redis: Timeout."), e)
         except exceptions.ConnectionError as e:

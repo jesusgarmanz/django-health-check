@@ -35,7 +35,8 @@ def raise_(ex):
 class HealthCheckDatabaseTests(TestCase):
     """
     Tests health check behavior with a mocked database backend.
-    Ensures check_status returns/raises the expected result when the database works or raises exceptions.
+    Ensures check_status returns/raises the expected result when
+    the database works or raises exceptions.
     """
 
     @patch('health_check.db.backends.TestModel.objects.create',
@@ -65,5 +66,6 @@ class HealthCheckDatabaseTests(TestCase):
            lambda title=None: MockDBModel(error_thrown=Exception))
     def test_raise_exception(self):
         db_backend = DatabaseBackend()
-        with self.assertRaises(Exception):
-            db_backend.run_check()
+        db_backend.run_check()
+        self.assertTrue(db_backend.errors)
+        self.assertIn('Service unavailable: Service unknown error', db_backend.pretty_status())

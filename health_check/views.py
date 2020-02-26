@@ -82,7 +82,7 @@ class MainView(CheckMixin, TemplateView):
 
     @never_cache
     def get(self, request, *args, **kwargs):
-        status_code = 500 if self.errors else 200
+        status_code = 500 if self.plugins_check else 200
 
         format_override = request.GET.get('format')
 

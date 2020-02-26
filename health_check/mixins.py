@@ -1,7 +1,10 @@
 import copy
+
 from concurrent.futures import ThreadPoolExecutor
 
-from health_check.conf import HEALTH_CHECK
+from django.db import connection
+
+from health_check.settings import HEALTH_CHECK
 from health_check.exceptions import ServiceWarning
 from health_check.plugins import plugin_dir
 
@@ -11,10 +14,8 @@ class CheckMixin:
     _plugins = None
 
     @property
-    def errors(self):
-        if not self._errors:
-            self._errors = self.run_check()
-        return self._errors
+    def plugins_check(self):
+        return self._errors if self._errors else self.run_check()
 
     @property
     def plugins(self):
@@ -33,7 +34,6 @@ class CheckMixin:
             try:
                 return plugin
             finally:
-                from django.db import connection
                 connection.close()
 
         with ThreadPoolExecutor(max_workers=len(self.plugins) or 1) as executor:

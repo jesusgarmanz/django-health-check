@@ -32,6 +32,6 @@ class TestCommand:
             call_command("health_check", stdout=stdout)
         stdout.seek(0)
         assert stdout.read() == (
-            "FailPlugin               ... unknown error: Oops\n"
+            "FailPlugin               ... Service unknown error: Oops\n"
             "OkPlugin                 ... working\n"
         )

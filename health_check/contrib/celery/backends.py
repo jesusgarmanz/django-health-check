@@ -24,6 +24,7 @@ class CeleryHealthCheck(BaseHealthCheckBackend):
         except IOError as e:
             self.add_error(ServiceUnavailable("IOError"), e)
         except NotImplementedError as e:
-            self.add_error(ServiceUnavailable("NotImplementedError: Make sure CELERY_RESULT_BACKEND is set"), e)
-        except BaseException as e:
-            self.add_error(ServiceUnavailable("Unknown error"), e)
+            self.add_error(ServiceUnavailable(
+                "NotImplementedError: Make sure CELERY_RESULT_BACKEND is set"),
+                e
+            )

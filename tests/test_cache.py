@@ -57,14 +57,21 @@ class HealthCheckCacheTests(TestCase):
         cache_backend = CacheBackend()
         cache_backend.run_check()
         self.assertTrue(cache_backend.errors)
-        self.assertIn('unavailable: Cache key does not match', cache_backend.pretty_status())
+        self.assertIn(
+            'Service returned unexpected result: Cache key does not match',
+            cache_backend.pretty_status()
+        )
 
     # check_status should catch generic exceptions raised by set and convert to ServiceUnavailable
     @patch("health_check.cache.backends.cache", MockCache(set_raises=Exception))
     def test_set_raises_generic(self):
         cache_backend = CacheBackend()
-        with self.assertRaises(Exception):
-            cache_backend.run_check()
+        cache_backend.run_check()
+        self.assertTrue(cache_backend.errors)
+        self.assertIn(
+            'Service unavailable: Service unknown error',
+            cache_backend.pretty_status()
+        )
 
     # check_status should catch CacheKeyWarning and convert to ServiceReturnedUnexpectedResult
     @patch("health_check.cache.backends.cache", MockCache(set_raises=CacheKeyWarning))

@@ -4,7 +4,7 @@ import socket
 import psutil
 
 from health_check.backends import BaseHealthCheckBackend
-from health_check.conf import HEALTH_CHECK
+from health_check.settings import HEALTH_CHECK
 from health_check.exceptions import (
     ServiceReturnedUnexpectedResult, ServiceWarning
 )

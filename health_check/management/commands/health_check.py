@@ -10,7 +10,7 @@ class Command(CheckMixin, BaseCommand):
 
     def handle(self, *args, **options):
         # perform all checks
-        errors = self.errors
+        errors = self.plugins_check
 
         for plugin in self.plugins:
             style_func = self.style.SUCCESS if not plugin.errors else self.style.ERROR

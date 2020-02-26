@@ -32,7 +32,7 @@ class TestCheckMixin:
         assert len(Checker().plugins) == 2
 
     def test_errors(self):
-        assert len(Checker().errors) == 1
+        assert len(Checker().plugins_check) == 1
 
     def test_run_check(self):
         assert len(Checker().run_check()) == 1

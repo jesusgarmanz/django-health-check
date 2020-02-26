@@ -3,7 +3,7 @@ import json
 import pytest
 
 from health_check.backends import BaseHealthCheckBackend
-from health_check.conf import HEALTH_CHECK
+from health_check.settings import HEALTH_CHECK
 from health_check.exceptions import ServiceWarning
 from health_check.plugins import plugin_dir
 from health_check.views import MediaType
