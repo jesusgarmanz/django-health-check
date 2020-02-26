@@ -28,3 +28,21 @@ script:
 - tox -e $TOXENV
 after_success:
 - codecov
+jobs:
+  include:
+    - stage: PyPI release  # will run after the default "test" stage succeeds
+      script: echo "Deploying to PyPI ..."  # override regular test script; "skip" should also work
+      env:
+        - TOXENV=qa  # if not set explicitly, build matrix vars will use their first value
+      if: tag IS present
+      deploy:
+        python: 3.7
+        provider: pypi
+        distributions: sdist bdist_wheel
+        user: codingjoe
+        password:
+          secure: jJyadofJm7F1Qco+EDCyN/aMZaYSbfQ0GAE02Bx7I499MkjPYvv38X2btg+PjdW3rzGD0d/kq24lfWLkgKncyQ/YMgLQ7H/GuCCHHYbKUklxllaoFXActBjstmKOvXyWWC5oEb+YEJ4HTwgkvS6wkp69B7C1d4BAOqGs5IKnCSo=
+        on:
+          tags: true
+          repo: KristianOellegaard/django-health-check
+          branch: master
